@@ -1,35 +1,36 @@
 package cmd
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/spf13/cobra"
 
 	"github.com/bookstairs/bookhunter/cmd/flags"
+	"github.com/bookstairs/bookhunter/internal/driver"
 	"github.com/bookstairs/bookhunter/internal/fetcher"
 	"github.com/bookstairs/bookhunter/internal/log"
 )
 
-// telegramCmd used for download books from the telegram channel
-var telegramCmd = &cobra.Command{
-	Use:   "telegram",
-	Short: "A tool for downloading books from telegram channel",
+const (
+	lowestSobooksBookID = 18000
+	sobooksWebsite      = "https://sobooks.cc"
+)
+
+// sobooksCmd used for download books from sobooks.cc
+var sobooksCmd = &cobra.Command{
+	Use:   "sobooks",
+	Short: "A tool for downloading books from sobooks.cc",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Remove prefix for telegram.
-		flags.Website = flags.ChannelID
-		flags.ChannelID = strings.TrimPrefix(flags.ChannelID, "https://t.me/")
+		// Set the default start index.
+		if flags.InitialBookID < lowestSobooksBookID {
+			flags.InitialBookID = lowestSobooksBookID
+		}
 
 		// Print download configuration.
 		log.NewPrinter().
-			Title("Telegram Download Information").
+			Title("SoBooks Download Information").
 			Head(log.DefaultHead...).
+			Row("SoBooks Code", flags.SoBooksCode).
 			Row("Config Path", flags.ConfigRoot).
 			Row("Proxy", flags.Proxy).
-			Row("Channel ID", flags.ChannelID).
-			Row("Mobile", flags.HideSensitive(flags.Mobile)).
-			Row("AppID", flags.HideSensitive(strconv.FormatInt(flags.AppID, 10))).
-			Row("AppHash", flags.HideSensitive(flags.AppHash)).
 			Row("Formats", flags.Formats).
 			Row("Extract Archive", flags.Extract).
 			Row("Download Path", flags.DownloadPath).
@@ -40,14 +41,14 @@ var telegramCmd = &cobra.Command{
 			Row("Thread Limit (req/min)", flags.RateLimit).
 			Print()
 
+		// Set the domain for using in the client.Client.
+		flags.Website = sobooksWebsite
+		flags.Driver = string(driver.LANZOU)
+
 		// Create the fetcher.
-		f, err := flags.NewFetcher(fetcher.Telegram, map[string]string{
-			"channelID": flags.ChannelID,
-			"mobile":    flags.Mobile,
-			"reLogin":   strconv.FormatBool(flags.ReLogin),
-			"appID":     strconv.FormatInt(flags.AppID, 10),
-			"appHash":   flags.AppHash,
-		})
+		properties := flags.NewDriverProperties()
+		properties["code"] = flags.SoBooksCode
+		f, err := flags.NewFetcher(fetcher.SoBooks, properties)
 		log.Exit(err)
 
 		// Wait all the threads have finished.
@@ -55,19 +56,12 @@ var telegramCmd = &cobra.Command{
 		log.Exit(err)
 
 		// Finished all the tasks.
-		log.Info("Successfully download all the telegram books.")
+		log.Info("Successfully download all the books.")
 	},
 }
 
 func init() {
-	f := telegramCmd.Flags()
-
-	// Telegram download arguments.
-	f.StringVarP(&flags.ChannelID, "channelID", "", flags.ChannelID, "The channel id for telegram")
-	f.StringVarP(&flags.Mobile, "mobile", "", flags.Mobile, "The mobile number, we will add +86 as default zone code")
-	f.BoolVar(&flags.ReLogin, "refresh", flags.ReLogin, "Refresh the login session")
-	f.Int64Var(&flags.AppID, "appID", flags.AppID, "The app id for telegram")
-	f.StringVar(&flags.AppHash, "appHash", flags.AppHash, "The app hash for telegram")
+	f := sobooksCmd.Flags()
 
 	// Common download flags.
 	f.StringSliceVarP(&flags.Formats, "format", "f", flags.Formats, "The file formats you want to download")
@@ -78,8 +72,8 @@ func init() {
 	f.IntVarP(&flags.Thread, "thread", "t", flags.Thread, "The number of download thead")
 	f.IntVar(&flags.RateLimit, "ratelimit", flags.RateLimit, "The allowed requests per minutes for every thread")
 
-	// Bind the required arguments
-	_ = telegramCmd.MarkFlagRequired("channelID")
-	_ = telegramCmd.MarkFlagRequired("appID")
-	_ = telegramCmd.MarkFlagRequired("appHash")
+	// SoBooks books flags.
+	f.StringVar(&flags.SoBooksCode, "code", flags.SoBooksCode, "The secret code for SoBooks")
+
+	_ = sobooksCmd.MarkFlagRequired("code")
 }

@@ -1,76 +1,218 @@
-# bookhunter
+# ⏬ bookhunter
 
-Downloading books from [talebook](https://github.com/talebook/talebook), [www.sanqiu.cc](https://www.sanqiu.cc/)
-This is totally rewrite fork compare to its [original version](https://github.com/hellojukay/dl-talebook).
+[![LICENSE](https://img.shields.io/github/license/bookstairs/bookhunter)](https://github.com/bookstairs/bookhunter/blob/main/LICENSE)
+[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bookstairs/bookhunter)](https://goreportcard.com/report/github.com/bookstairs/bookhunter)
+![](https://img.shields.io/github/stars/bookstairs/bookhunter.svg)
+![](https://img.shields.io/github/forks/bookstairs/bookhunter.svg)
+![Release](https://github.com/bookstairs/bookhunter/workflows/release/badge.svg)
 
-## Feature
+Downloading books from [talebook](https://github.com/talebook/talebook),
+[SoBooks](https://sobooks.cc)
+[中小学教材](https://basic.smartedu.cn/tchMaterial)
+and Telegram Channels. This is a totally
+rewritten fork compared to its [original version](https://github.com/hellojukay/dl-talebook).
+
+## 🚧 Development
+
+1. [Go Releaser](https://github.com/goreleaser/goreleaser) is used for releasing and local building
+2. [golangci-lint](https://github.com/golangci/golangci-lint) is used for code style.
+3. [pre-commit](https://pre-commit.com/) is used for checking code before committing.
+
+## 💾 Install
+
+### 🍎 Homebrew (for macOS, Linux)
+
+```shell
+brew tap bookstairs/tap
+brew install bookhunter
+```
+
+### 💻 Scope (for Windows)
+
+```shell
+scoop bucket add bookstairs https://github.com/bookstairs/scoop-bucket.git
+scoop install bookstairs/bookhunter
+```
+
+### 🛠 Manually
+
+Download the latest release in [release page](https://github.com/bookstairs/bookhunter/releases). Choose related tarball
+by your running environment.
+
+## 📚 Usage
+
+| Website                                          | Address                                | Direct Download | [Aliyun](https://www.aliyundrive.com/) | [Lanzou](https://www.lanzou.com/) | [Telecom](https://cloud.189.cn/) |
+|--------------------------------------------------|----------------------------------------|-----------------|----------------------------------------|-----------------------------------|----------------------------------|
+| [智慧教育平台](#download-textbooks-for-kids)           | <https://basic.smartedu.cn/tchMaterial>   | ✅               | ❌                                      | ❌                                 | ❌                                |
+| [Talebook](#download-books-from-talebook)        | <https://github.com/talebook/talebook> | ✅               | ❌                                      | ❌                                 | ❌                                |
+| [SoBooks](#download-books-from-sobooks)          | <https://sobooks.cc>                  | ✅               | ❌                                      | ✅                                 | ❌                                |
+| [Telegram](#download-books-from-telegram-groups) | <https://t.me>                         | ✅               | ❌                                      | ❌                                 | ❌                                |
+| [Hsu Life](#download-books-from-hsu-life)        | <https://book.hsu.life>                | ✅               | ❌                                      | ❌                                 | ❌                                |
+
+### Login Aliyundrive to get the `refreshToken`
+
+We would show a QR code at the first time. And cache the `refreshToken` after successfully login.
+
+```shell
+bookhunter aliyun
+```
+
+### Download textbooks for Kids
+
+```text
+Usage:
+  bookhunter k12 [flags]
+
+Flags:
+  -d, --download string   The book directory you want to use (default ".")
+  -h, --help              help for k12
+      --ratelimit int     The allowed requests per minutes for every thread (default 30)
+  -t, --thread int        The number of download thead (default 1)
+
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
+```
+
+### Register account in Talebook
+
+```text
+Usage:
+  bookhunter talebook register [flags]
+
+Flags:
+  -e, --email string      The talebook email
+  -h, --help              help for register
+  -p, --password string   The talebook password
+  -u, --username string   The talebook username
+  -w, --website string    The talebook link
+
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
+```
 
 ### Download books from Talebook
 
-1. Download from previous progress.
-2. Register account on website.
-3. Bypass the ratelimit from cloudflare.
+```text
+Usage:
+  bookhunter talebook download [flags]
 
-### Download books from Sanqiu
+Flags:
+  -d, --download string   The book directory you want to use (default ".")
+  -f, --format strings    The file formats you want to download (default [epub,azw3,mobi,pdf,zip])
+  -h, --help              help for download
+  -i, --initial int       The book id you want to start download (default 1)
+  -p, --password string   The talebook password
+      --ratelimit int     The allowed requests per minutes for every thread (default 30)
+  -r, --rename            Rename the book file by book id
+  -t, --thread int        The number of download thead (default 1)
+  -u, --username string   The talebook username
+  -w, --website string    The talebook link
 
-1. Find all the books update from [www.sanqiu.cc](https://www.sanqiu.cc/).
-2. Download required formats from 189 cloud drive.
-3. Record the download progress for crontab jobs.
-
-### Download books from Sobooks.
-
-TODO
-
-### Download books from my Telegram groups.
-
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
 ```
+
+### Download books from SoBooks
+
+```text
+Usage:
+  bookhunter sobooks [flags]
+
+Flags:
+      --code string       The secret code for SoBooks (default "244152")
+  -d, --download string   The book directory you want to use (default ".")
+  -e, --extract           Extract the archive file for filtering
+  -f, --format strings    The file formats you want to download (default [epub,azw3,mobi,pdf,zip])
+  -h, --help              help for sobooks
+  -i, --initial int       The book id you want to start download (default 1)
+      --ratelimit int     The allowed requests per minutes for every thread (default 30)
+  -r, --rename            Rename the book file by book id
+  -t, --thread int        The number of download thead (default 1)
+
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
+```
+
+### Download books from Telegram groups
+
+Example command: `bookhunter telegram --appID ****** --appHash ****** --thread 4 --proxy http://127.0.0.1:7890 --channelID https://t.me/sharebooks4you`
+
+Please refer [Creating your Telegram Application](https://core.telegram.org/api/obtaining_api_id) to obtain your `appID`
+and `appHash`.
+
+```text
 Usage:
   bookhunter telegram [flags]
 
 Flags:
-      --appHash string        The appHash for telegram.
-      --appId int             The appID for telegram.
-  -k, --channelId string      The channelId for telegram. You must set value. (default "https://t.me/haoshufenxiang")
-  -d, --download string       The book directory you want to use, default would be current working directory. (default "/Users/zhaojianyun/Developer/project/github/bookhunter")
-  -f, --format strings        The file formats you want to download. (default [EPUB,MOBI,PDF])
-  -h, --help                  help for telegram
-  -i, --initial int           The book id you want to start download. It should exceed 0. (default 1)
-      --loadMessageSize int   The loadMessageSize is used to set the size of the number of messages obtained by requesting telegram API. 0 < loadMessageSize < 100 (default 20)
-  -g, --progress string       The download progress file name you want to use, it would be saved under the download directory. (default "progress")
-      --reLogin               force re-login.
-  -n, --rename                Rename the book file by book ID.
-  -r, --retry int             The max retry times for timeout download request. (default 5)
-  -s, --sessionPath string    The session file for telegram. (default ".tg-session")
-  -t, --thread int            The number of download threads. (default 1)
-  -o, --timeout duration      The max pending time for download request. (default 10m0s)
+      --appHash string     The app hash for telegram
+      --appID int          The app id for telegram
+      --channelID string   The channel id for telegram
+  -d, --download string    The book directory you want to use (default ".")
+  -e, --extract            Extract the archive file for filtering
+  -f, --format strings     The file formats you want to download (default [epub,azw3,mobi,pdf,zip])
+  -h, --help               help for telegram
+  -i, --initial int        The book id you want to start download (default 1)
+      --mobile string      The mobile number, we will add +86 as default zone code
+      --ratelimit int      The allowed requests per minutes for every thread (default 30)
+      --refresh            Refresh the login session
+  -r, --rename             Rename the book file by book id
+  -t, --thread int         The number of download thead (default 1)
+
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
 ```
 
-Example command :
-`bookhunter telegram --appId 12345 --appHash xxxxx -k https://t.me/MothLib`
+### Download books from Hsu Life
 
-How to get `appId` and `appHash` please refer to  [Creating your Telegram Application](https://core.telegram.org/api/obtaining_api_id)
+Example command: `bookhunter hsu --username ****** --password ******`
 
-## Install
+```text
+Usage:
+  bookhunter hsu [flags]
 
-### Homebrew (for macOS, Linux)
+Flags:
+  -d, --download string   The book directory you want to use (default ".")
+  -f, --format strings    The file formats you want to download (default [epub,azw3,mobi,pdf,zip])
+  -h, --help              help for hsu
+  -i, --initial int       The book id you want to start download (default 1)
+  -p, --password string   The hsu.life password
+      --ratelimit int     The allowed requests per minutes for every thread (default 30)
+  -r, --rename            Rename the book file by book id
+  -t, --thread int        The number of download thead (default 1)
+  -u, --username string   The hsu.life username
 
-```shell
-brew tap bibliolater/tap
-brew install bookhunter
+Global Flags:
+  -c, --config string     The config path for bookhunter
+  -k, --keyword strings   The keywords for books
+      --proxy string      The request proxy
+      --retry int         The retry times for a failed download (default 3)
+  -s, --skip-error        Continue to download the next book if the current book download failed (default true)
+      --verbose           Print all the logs for debugging
 ```
-
-### Scope (for Windows)
-
-```shell
-scoop bucket add bibliolater https://github.com/bibliolater/scoop-bucket.git
-scoop install bibliolater/bookhunter
-```
-
-### Manually
-
-Download the latest release in [release page](https://github.com/bibliolater/bookhunter/releases). Choose related
-tarball by your running environment.
-
-## Usage
-
-Execute `bookhunter -h` to see how to use this download tools.
